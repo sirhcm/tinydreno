@@ -15,29 +15,33 @@ enum cl_handle_type {
   CL_HANDLE_LINKED
 };
 
+// handle->data for CL_HANDLE_COMPILED and CL_HANDLE_LIBRARY
+struct cl_compiled_data {
+  uint64_t chip_id;
+  uint32_t mode;
+  void    *llvm_bitcode;
+  uint64_t llvm_bitcode_size;
+  char    *build_log;
+  uint32_t build_log_len;
+  uint32_t error_code;
+};
+
+// handle->data for CL_HANDLE_LINKED
+struct cl_executable_data {
+  int32_t  num_kernels;
+  void    *kernel_props;
+  uint32_t error_code;
+  char    *build_log;
+  char     _unk0[0x20];
+  uint64_t chip_id;
+  uint32_t mode;
+};
+
 typedef struct {
   enum cl_handle_type type;
   union {
-    // handle->data for CL_HANDLE_COMPILED and CL_HANDLE_LIBRARY
-    struct {
-      uint64_t chip_id;
-      uint32_t mode;
-      void    *llvm_bitcode;
-      uint64_t llvm_bitcode_size;
-      char    *build_log;
-      uint32_t build_log_len;
-      uint32_t error_code;
-    } *compiled;
-    // handle->data for CL_HANDLE_LINKED
-    struct {
-      int32_t  num_kernels;
-      void    *kernel_props;
-      uint32_t error_code;
-      char    *build_log;
-      char     _unk0[0x20];
-      uint64_t chip_id;
-      uint32_t mode;
-    } *executable;
+    struct cl_compiled_data *compiled;
+    struct cl_executable_data *executable;
   };
 } cl_handle;
 
